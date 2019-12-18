@@ -58,6 +58,7 @@ class MyBot(commands.Bot):
                         log.debug("!!! Lobby ws other msg.type %s %s" % (msg.type, msg))
 
             self.lobby_ws = None
+            session.close()
 
     async def on_message(self, msg):
         if msg.author == self.user or msg.channel.id != CHANNEL_ID:
