@@ -20,54 +20,11 @@ intents = discord.Intents(messages=True)
 
 
 class MyBot(Bot):
-    def __init__(self):
-        super().__init__(command_prefix="!", intents=intents, chunk_guilds_at_startup=False)
-        self.lobby_ws = None
-        self.background_task = self.loop.create_task(self.lobby_task())
-
-    async def lobby_task(self):
-        await self.wait_until_ready()
-
-        # Get the pychess-lobby channel
-        channel = self.get_channel(CHANNEL_ID)
-
-        while True:
-            log.debug("+++ Creating new aiohttp.ClientSession()")
-            session = aiohttp.ClientSession()
-
-            async with session.ws_connect(PYCHESS + '/wsl') as ws:
-                self.lobby_ws = ws
-                await ws.send_json({"type": "lobby_user_connected", "username": "Discord-Relay"})
-                async for msg in ws:
-                    if msg.type == aiohttp.WSMsgType.TEXT:
-                        print("msg.data", msg.data)
-                        try:
-                            if msg.data == 'close':
-                                log.debug("!!! Lobby ws got 'close' msg")
-                                await ws.close()
-                                break
-                            else:
-                                data = json.loads(msg.data)
-                                if data['type'] == 'ping':
-                                    await ws.send_json({"type": "pong"})
-                                elif data['type'] == 'lobbychat' and data['user'] and data['user'] != "Discord-Relay":
-                                    await channel.send("%s: %s" % (data['user'], data['message']))
-                        except Exception:
-                            logging.exception("baj van")
-                    elif msg.type == aiohttp.WSMsgType.CLOSE:
-                        log.debug("!!! Lobby ws connection closed with aiohttp.WSMsgType.CLOSE")
-                    elif msg.type == aiohttp.WSMsgType.ERROR:
-                        log.debug("!!! Lobby ws connection closed with exception %s" % ws.exception())
-                    else:
-                        log.debug("!!! Lobby ws other msg.type %s %s" % (msg.type, msg))
-
-            self.lobby_ws = None
-            await session.close()
 
     async def on_message(self, msg):
         log.debug("---on_message()", msg)
-        if msg.author == self.user or msg.channel.id != CHANNEL_ID:
-            log.debug("---self.user msg OR wrong channel.id -> return")
+        if msg.author.id == self.user.id or msg.channel.id != CHANNEL_ID:
+            log.debug("---self.user msg OR other channel.id -> return")
             return
 
         if self.lobby_ws is None:
@@ -77,7 +34,50 @@ class MyBot(Bot):
         await self.lobby_ws.send_json({"type": "lobbychat", "user": "", "message": "%s: %s" % (msg.author.name, msg.content)})
 
 
-bot = MyBot()
+bot = MyBot(command_prefix="!", intents=intents)
+
+
+async def lobby_task(bot):
+    await bot.wait_until_ready()
+
+    # Get the pychess-lobby channel
+    channel = bot.get_channel(CHANNEL_ID)
+
+    while True:
+        log.debug("+++ Creating new aiohttp.ClientSession()")
+        session = aiohttp.ClientSession()
+
+        async with session.ws_connect(PYCHESS + '/wsl') as ws:
+            bot.lobby_ws = ws
+            await ws.send_json({"type": "lobby_user_connected", "username": "Discord-Relay"})
+            async for msg in ws:
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    print("msg.data", msg.data)
+                    try:
+                        if msg.data == 'close':
+                            log.debug("!!! Lobby ws got 'close' msg")
+                            await ws.close()
+                            break
+                        else:
+                            data = json.loads(msg.data)
+                            if data['type'] == 'ping':
+                                await ws.send_json({"type": "pong"})
+                            elif data['type'] == 'lobbychat' and data['user'] and data['user'] != "Discord-Relay":
+                                await channel.send("%s: %s" % (data['user'], data['message']))
+                    except Exception:
+                        logging.exception("baj van")
+                elif msg.type == aiohttp.WSMsgType.CLOSE:
+                    log.debug("!!! Lobby ws connection closed with aiohttp.WSMsgType.CLOSE")
+                elif msg.type == aiohttp.WSMsgType.ERROR:
+                    log.debug("!!! Lobby ws connection closed with exception %s" % ws.exception())
+                else:
+                    log.debug("!!! Lobby ws other msg.type %s %s" % (msg.type, msg))
+
+        bot.lobby_ws = None
+        await session.close()
+
+
+background_task = bot.loop.create_task(lobby_task(bot))
 
 
 if __name__ == "__main__":
