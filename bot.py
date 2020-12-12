@@ -16,7 +16,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 CHANNEL_ID = 653203449927827456
 
-intents = discord.Intents(messages=True)
+intents = discord.Intents(messages=True, guilds=True)
 
 
 class MyBot(Bot):
@@ -42,6 +42,7 @@ async def lobby_task(bot):
 
     # Get the pychess-lobby channel
     channel = bot.get_channel(CHANNEL_ID)
+    log.debug("Our channel is:", channel)
 
     while True:
         log.debug("+++ Creating new aiohttp.ClientSession()")
