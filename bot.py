@@ -4,6 +4,7 @@ import json
 import logging
 import os
 
+import discord
 from discord.ext.commands import Bot
 
 log = logging.getLogger('discord')
@@ -15,10 +16,12 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 CHANNEL_ID = 653203449927827456
 
+intents = discord.Intents(messages=True)
+
 
 class MyBot(Bot):
     def __init__(self):
-        super().__init__(command_prefix="!")
+        super().__init__(command_prefix="!", intents=intents)
         self.lobby_ws = None
         self.background_task = self.loop.create_task(self.lobby_task())
 
