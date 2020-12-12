@@ -18,10 +18,12 @@ CHANNEL_ID = 653203449927827456
 
 class MyBot(Bot):
     async def on_ready(self):
+        log.debug("on_ready()")
         self.lobby_ws = None
         self.background_task = self.loop.create_task(self.lobby_task())
 
     async def lobby_task(self):
+        log.debug("lobby_task()")
         await self.wait_until_ready()
 
         # Get the pychess-lobby channel
@@ -61,7 +63,7 @@ class MyBot(Bot):
             await session.close()
 
     async def on_message(self, msg):
-        log.debug("---on_message()", msg)
+        log.debug("on_message()", msg)
         if msg.author == self.user or msg.channel.id != CHANNEL_ID:
             log.debug("---self.user msg OR wrong channel.id -> return")
             return
@@ -73,7 +75,7 @@ class MyBot(Bot):
         await self.lobby_ws.send_json({"type": "lobbychat", "user": "", "message": "%s: %s" % (msg.author.name, msg.content)})
 
 
-bot = MyBot(command_prefix='!')
+bot = MyBot('!')
 
 
 if __name__ == "__main__":
