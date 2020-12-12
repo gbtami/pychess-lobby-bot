@@ -70,7 +70,7 @@ class MyBot(commands.Bot):
         if self.lobby_ws is None:
             log.debug("---self.lobby_ws is None -> return")
             return
-        console.log("+++ msg is OK -> send_json()")
+        log.debug("+++ msg is OK -> send_json()")
         await self.lobby_ws.send_json({"type": "lobbychat", "user": "", "message": "%s: %s" % (msg.author.name, msg.content)})
 
 
