@@ -42,7 +42,7 @@ async def lobby_task(bot):
 
     # Get the pychess-lobby channel
     channel = bot.get_channel(CHANNEL_ID)
-    log.debug("Our channel is:", channel)
+    log.debug("Our channel is: %s", channel)
 
     while True:
         log.debug("+++ Creating new aiohttp.ClientSession()")
@@ -70,9 +70,9 @@ async def lobby_task(bot):
                 elif msg.type == aiohttp.WSMsgType.CLOSE:
                     log.debug("!!! Lobby ws connection closed with aiohttp.WSMsgType.CLOSE")
                 elif msg.type == aiohttp.WSMsgType.ERROR:
-                    log.debug("!!! Lobby ws connection closed with exception %s" % ws.exception())
+                    log.debug("!!! Lobby ws connection closed with exception %s", ws.exception())
                 else:
-                    log.debug("!!! Lobby ws other msg.type %s %s" % (msg.type, msg))
+                    log.debug("!!! Lobby ws other msg.type %s %s", msg.type, msg)
 
         bot.lobby_ws = None
         await session.close()
