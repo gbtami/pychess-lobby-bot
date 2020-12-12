@@ -89,5 +89,7 @@ if __name__ == "__main__":
 
     logging.basicConfig()
     logging.getLogger().setLevel(level=logging.DEBUG if args.v else logging.WARNING if args.w else logging.INFO)
+    logger = logging.getLogger('discord')
+    logger.setLevel(logging.DEBUG)
 
     bot.run(TOKEN)
