@@ -62,11 +62,15 @@ class MyBot(commands.Bot):
             await session.close()
 
     async def on_message(self, msg):
+        log.debug("---on_message()", msg)
         if msg.author == self.user or msg.channel.id != CHANNEL_ID:
+            log.debug("---self.user msg OR wrong channel.id -> return")
             return
 
         if self.lobby_ws is None:
+            console.log("---self.lobby_ws is None -> return")
             return
+        console.log("+++ msg is OK -> send_json()")
         await self.lobby_ws.send_json({"type": "lobbychat", "user": "", "message": "%s: %s" % (msg.author.name, msg.content)})
 
 
