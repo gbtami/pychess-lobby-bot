@@ -4,7 +4,7 @@ import json
 import logging
 import os
 
-from discord.ext import commands
+from discord.ext.commands import Bot
 
 log = logging.getLogger('discord')
 log.setLevel(logging.INFO)
@@ -16,9 +16,8 @@ GUILD = os.getenv('DISCORD_GUILD')
 CHANNEL_ID = 653203449927827456
 
 
-class MyBot(commands.Bot):
-    def __init__(self):
-        super().__init__(command_prefix="!")
+class MyBot(Bot):
+    async def on_ready(self):
         self.lobby_ws = None
         self.background_task = self.loop.create_task(self.lobby_task())
 
