@@ -21,7 +21,7 @@ intents = discord.Intents(messages=True)
 
 class MyBot(Bot):
     def __init__(self):
-        super().__init__(command_prefix="!", intents=intents)
+        super().__init__(command_prefix="!", intents=intents, chunk_guilds_at_startup=False)
         self.lobby_ws = None
         self.background_task = self.loop.create_task(self.lobby_task())
 
