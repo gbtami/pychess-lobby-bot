@@ -53,7 +53,7 @@ async def lobby_task(bot):
             await ws.send_json({"type": "lobby_user_connected", "username": "Discord-Relay"})
             async for msg in ws:
                 if msg.type == aiohttp.WSMsgType.TEXT:
-                    print("msg.data", msg.data)
+                    # print("msg.data", msg.data)
                     try:
                         if msg.data == 'close':
                             log.debug("!!! Lobby ws got 'close' msg")
@@ -88,8 +88,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     logging.basicConfig()
-    logging.getLogger().setLevel(level=logging.DEBUG if args.v else logging.WARNING if args.w else logging.INFO)
-    logger = logging.getLogger('discord')
-    logger.setLevel(logging.DEBUG)
+    logging.getLogger("discord").setLevel(level=logging.DEBUG if args.v else logging.WARNING if args.w else logging.INFO)
 
     bot.run(TOKEN)
