@@ -73,7 +73,7 @@ class MyBot(Bot):
         await self.lobby_ws.send_json({"type": "lobbychat", "user": "", "message": "%s: %s" % (msg.author.name, msg.content)})
 
 
-bot = MyBot()
+bot = MyBot(command_prefix='!')
 
 
 if __name__ == "__main__":
