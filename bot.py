@@ -22,7 +22,7 @@ intents = discord.Intents(messages=True, guilds=True)
 class MyBot(Bot):
 
     async def on_message(self, msg):
-        log.debug("---on_message()", msg)
+        log.debug("---on_message() %s", msg)
         if msg.author.id == self.user.id or msg.channel.id != CHANNEL_ID:
             log.debug("---self.user msg OR other channel.id -> return")
             return
