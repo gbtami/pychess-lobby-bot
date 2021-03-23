@@ -14,7 +14,8 @@ PYCHESS = os.getenv("PYCHESS", "http://127.0.0.1:8080")
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
-CHANNEL_ID = 653203449927827456
+PYCHESS_LOBBY_CHANNEL_ID = 653203449927827456
+GAME_SEEK_CHANNEL_ID = 823862902648995910
 
 intents = discord.Intents(messages=True, guilds=True)
 
@@ -23,7 +24,7 @@ class MyBot(Bot):
 
     async def on_message(self, msg):
         log.debug("---on_message() %s", msg)
-        if msg.author.id == self.user.id or msg.channel.id != CHANNEL_ID:
+        if msg.author.id == self.user.id or msg.channel.id != PYCHESS_LOBBY_CHANNEL_ID:
             log.debug("---self.user msg OR other channel.id -> return")
             return
 
@@ -41,8 +42,11 @@ async def lobby_task(bot):
     await bot.wait_until_ready()
 
     # Get the pychess-lobby channel
-    channel = bot.get_channel(CHANNEL_ID)
-    log.debug("Our channel is: %s", channel)
+    pychess_lobby_channel = bot.get_channel(PYCHESS_LOBBY_CHANNEL_ID)
+    log.debug("pychess_lobby_channel is: %s", pychess_lobby_channel)
+
+    game_seek_channel = bot.get_channel(GAME_SEEK_CHANNEL_ID)
+    log.debug("game_seek_channel is: %s", game_seek_channel)
 
     while True:
         log.debug("+++ Creating new aiohttp.ClientSession()")
@@ -64,7 +68,9 @@ async def lobby_task(bot):
                             if data['type'] == 'ping':
                                 await ws.send_json({"type": "pong"})
                             elif data['type'] == 'lobbychat' and data['user'] and data['user'] != "Discord-Relay":
-                                await channel.send("%s: %s" % (data['user'], data['message']))
+                                await pychess_lobby_channel.send("%s: %s" % (data['user'], data['message']))
+                            elif data['type'] == 'create_seek' and data['user'] and data['user'] != "Discord-Relay":
+                                await game_seek_channel.send("%s" % data['message'])
                     except Exception:
                         logging.exception("baj van")
                 elif msg.type == aiohttp.WSMsgType.CLOSE:
