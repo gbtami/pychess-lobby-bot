@@ -16,6 +16,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 PYCHESS_LOBBY_CHANNEL_ID = 653203449927827456
 GAME_SEEK_CHANNEL_ID = 823862902648995910
+TOURNAMENT_CHANNEL_ID = 861234739820888074
 
 intents = discord.Intents(messages=True, guilds=True)
 
@@ -48,6 +49,9 @@ async def lobby_task(bot):
     game_seek_channel = bot.get_channel(GAME_SEEK_CHANNEL_ID)
     log.debug("game_seek_channel is: %s", game_seek_channel)
 
+    tournament_channel = bot.get_channel(TOURNAMENT_CHANNEL_ID)
+    log.debug("tournament_channel is: %s", tournament_channel)
+
     while True:
         log.debug("+++ Creating new aiohttp.ClientSession()")
         session = aiohttp.ClientSession()
@@ -73,6 +77,9 @@ async def lobby_task(bot):
                             elif data['type'] == 'create_seek':
                                 log.debug("+++ create_seek msg: %s", data["message"])
                                 await game_seek_channel.send("%s" % data['message'])
+                            elif data['type'] == 'create_tournament':
+                                log.debug("+++ create_tournament msg: %s", data["message"])
+                                await tournament_channel.send("%s" % data['message'])
                     except Exception:
                         logging.exception("baj van")
                 elif msg.type == aiohttp.WSMsgType.CLOSE:
