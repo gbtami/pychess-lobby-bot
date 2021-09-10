@@ -73,7 +73,7 @@ async def lobby_task(bot):
                                 await ws.send_json({"type": "pong"})
                             elif data['type'] == 'lobbychat' and data['user'] and data['user'] != "Discord-Relay":
                                 log.debug("+++ lobbychat msg: %s %s", data['user'], data["message"])
-                                await pychess_lobby_channel.send("%s: %s" % (data['user'], data['message']))
+                                await pychess_lobby_channel.send("**%s**: %s" % (data['user'], data['message']))
                             elif data['type'] == 'create_seek':
                                 log.debug("+++ create_seek msg: %s", data["message"])
                                 await game_seek_channel.send("%s" % data['message'])
