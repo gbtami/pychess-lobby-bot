@@ -60,7 +60,7 @@ async def lobby_task(bot):
 
     guild = bot.get_guild(SERVER_ID)
     role = guild.get_role(TOURNAMENT_GLADIATOR_ID)
-    log.debug("guild, role, intent", guild, role, role.mention)
+    log.debug("guild, role, intent are: %s %s %s", guild, role, role.mention)
 
     while True:
         log.debug("+++ Creating new aiohttp.ClientSession()")
