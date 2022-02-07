@@ -76,7 +76,7 @@ def get_role_mentions(bot, message):
     gladiator_role = guild.get_role(ROLES["gladiator"])
     log.debug("guild, role, intent are: %s %s %s", guild, gladiator_role, gladiator_role.mention)
 
-    variant = message.split()[1]
+    variant = message.split()[1].strip("*")
 
     if variant in CATEGORIES["shogi"]:
         role = guild.get_role(ROLES["shogi"])
