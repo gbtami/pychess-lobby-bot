@@ -39,6 +39,8 @@ ROLES = {
     "shinobi": 867889352704131132,
     "empire": 867892839493009478,
     "chess": 658545185571209221,
+    "chak": 940232991182041098,
+    "chennis": 940233624048009236,
 }
 
 CATEGORIES = {
@@ -121,11 +123,10 @@ def get_role_mentions(bot, message):
         role = guild.get_role(ROLES["shinobi"])
     elif variant == "empire":
         role = guild.get_role(ROLES["empire"])
-# TODO: self-roles?
-#    elif variant == "chak":
-#        role = guild.get_role(ROLES["chak"])
-#    elif variant == "chennis":
-#        role = guild.get_role(ROLES["chennis"])
+    elif variant == "chak":
+        role = guild.get_role(ROLES["chak"])
+    elif variant == "chennis":
+        role = guild.get_role(ROLES["chennis"])
     else:
         role = guild.get_role(ROLES["chess"])
 
