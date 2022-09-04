@@ -52,7 +52,7 @@ CATEGORIES = {
     "xiangqi": ("xiangqi", "manchu", "janggi", "minixiangqi"),
 }
 
-intents = discord.Intents(messages=True, guilds=True)
+intents = discord.Intents(messages=True, guilds=True, message_content=True)
 
 
 class MyBot(Bot):
