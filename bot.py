@@ -1,8 +1,10 @@
-import aiohttp
+import asyncio
 import argparse
 import json
 import logging
 import os
+
+import aiohttp
 
 import discord
 from discord.ext.commands import Bot
@@ -193,7 +195,13 @@ async def lobby_task(bot):
         await session.close()
 
 
-background_task = bot.loop.create_task(lobby_task(bot))
+async def main():
+    # do other async things
+    asyncio.create_task(lobby_task(bot))
+
+    # start the client
+    async with bot:
+        await bot.start(TOKEN)
 
 
 if __name__ == "__main__":
@@ -205,4 +213,4 @@ if __name__ == "__main__":
     logging.basicConfig()
     logging.getLogger("discord").setLevel(level=logging.DEBUG if args.v else logging.WARNING if args.w else logging.INFO)
 
-    bot.run(TOKEN)
+    asyncio.run(main())
